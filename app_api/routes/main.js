@@ -3,6 +3,6 @@ var router = express.Router()
 
 var ctrlParser=require('../controllers/parser');
 
-router.get('/',ctrlParser.getData);
+router.get('/chanelinfo',ctrlParser.getData);
 
 module.exports = router;

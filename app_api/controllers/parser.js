@@ -17,14 +17,12 @@ var getData=function(req,res){
         sendJSONresponse(res,400,{'error':'youtube ID is not passed'});
         return;
     }
-    if (!parteon){
+    if (!patreon){
         sendJSONresponse(res,400,{'error':'patreon ID is not passed'});
         return;
     }
 
+    sendJSONresponse(res,200,{'ok':'Sucscess!!!!'});
 }
 
-
-
-
-  module.exports.getData=getData;
+module.exports.getData=getData;
