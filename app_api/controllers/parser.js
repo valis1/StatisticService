@@ -1,5 +1,8 @@
 var mongoose = require('mongoose');
+var sociabladeParser=require('../helpers/socialblade_parser');
+var request=require('request')
 var User = mongoose.model('users');
+
 
 //Отправка ответа в JSON
 var sendJSONresponse = function(res, status, content) {
@@ -17,6 +20,7 @@ var getData=function(req,res){
     let patreon=req.query.patreon;
     let userTime=req.query.gmt ? req.query.gmt:0;
     let sendResponse=sendJSONresponse;
+    let sociableData
 
     if (!socialbladeID){
         sendResponse(res,400,{'error':'socialbladeID ID is not passed'});
@@ -32,7 +36,7 @@ var getData=function(req,res){
         'timezone':userTime},
         function (err,user){
             if (err){
-                sendResponse(res,523,'db Error');
+                sendResponse(res,523,{'error':'db request error'});
             }
             else {
                 let todaySubscribers= user.todaySubscribers
@@ -42,16 +46,28 @@ var getData=function(req,res){
                 user.lastRequest=Date.now();
                 user.save((err)=>console.log(err));
 
-                //Здесь пошел парсинг
-                
+                //Пошел запрос Sociablade
+                let requestOptions={
+                    url:'https://socialblade.com/youtube'+socialbladeID,
+                    headers:{
+                        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
+                    }
+                }
+                request(requestOptions, function (error, response, body) {
+                    if (err){
+                        sendResponse(res,534,{'error':'Sociable request error'});
+                    }
+                    else {
+                        sociableData=sociabladeParser.getData(body);
+                        sendResponse(res,200,{'ok':'Sucscess!!!!'});
+                    }
+                });
+
 
             
             }
         }
         );
-
-
-        sendResponse(res,200,{'ok':'Sucscess!!!!'});
 }
 
 module.exports.getData=getData;
