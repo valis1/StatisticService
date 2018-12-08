@@ -35,12 +35,15 @@ var getData=function(req,res){
                 sendResponse(res,523,'db Error');
             }
             else {
+                let todaySubscribers= user.todaySubscribers
+
                 //Пообновляем данные по юзеру
                 user.timezone=userTime;
                 user.lastRequest=Date.now();
                 user.save((err)=>console.log(err));
 
                 //Здесь пошел парсинг
+                
 
             
             }
