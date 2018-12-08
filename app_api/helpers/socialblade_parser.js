@@ -17,6 +17,11 @@ let getData=function(data){
         return false;
     }
 
+    //Хардкор - селектор просмотров за сегодня
+    todayString=root.querySelector('div[style*="width: 860px;"]')[0]
+    console.log(todayString)
+    
+
 
     return res;
 }
