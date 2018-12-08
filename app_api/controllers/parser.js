@@ -58,8 +58,32 @@ var getData=function(req,res){
                         sendResponse(res,534,{'error':'Sociable request error'});
                     }
                     else {
-                        sociableData=sociabladeParser.getData(body);
-                        sendResponse(res,200,{'ok':'Sucscess!!!!'});
+                        let result=sociabladeParser.getData(body);
+                        if (result){
+                        //Запрос Live статистики по подписчикам
+                        requestOptions.url=requestOptions.url+'/realtime';
+                        request(requestOptions,function(error,response,body){
+                            if (err){
+                                sendResponse(res,534,{'error':'Sociable realtime stat request error'});
+                            }
+                            else {
+                                let lsTempResult=sociabladeParser.getCount(body);
+                                if (lsTempResult){
+                                    result.liveSubscribers=lsTempResult;
+                                    sendResponse(res,200,result);
+                                }
+                                else {
+                                    sendResponse(res,501,{'error':'Sociable live page parse error'});
+                                }
+
+                            }
+
+                        });
+                        }
+                        else{
+                            sendResponse(res,501,{'error':'Sociable parse error on main page'});
+                        }
+                     
                     }
                 });
 

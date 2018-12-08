@@ -1,29 +1,42 @@
 var HTMLParser = require('fast-html-parser');
+var cheerio = require("cheerio");
 
 
 let getData=function(data){
     let root = HTMLParser.parse(data);
+    let $ = cheerio.load(data);
     let res={};
-    //Простые селекторы
+
+    //Набор селекторов
     try {
-    res.viewsCount=root.querySelectorAll('#youtube-stats-header-views')[0].text;
-    res.subscribleRank=root.querySelectorAll('#afd-header-subscriber-rank')[0].text;
-    res.videoViewRanc=root.querySelectorAll('#afd-header-videoview-rank')[0].text;
-    res.views30Days=root.querySelectorAll('#afd-header-views-30d')[0].text;
-    res.subscribers30Days=root.querySelectorAll('#afd-header-subs-30d')[0].text;
+    res.viewsCount=$('#youtube-stats-header-views').html()
+    res.subscribleRank=$('#afd-header-subscriber-rank').html()
+    res.videoViewRanc=$('#afd-header-videoview-rank').html()
+    res.views30Days=$('#afd-header-views-30d').html()
+    res.subscribers30Days=$('#afd-header-subs-30d').html()
+    res.todayVideoViews=$('div[style*="width: 860px; height: 32px;"]').last().find('span').last().html();
+    res.userCreatedDate=$('.YouTubeUserTopInfo').last().find('span').last().html();
     }
     catch (e){
         console.log(e);
         return false;
     }
 
-    //Хардкор - селектор просмотров за сегодня
-    todayString=root.querySelector('div[style*="width: 860px;"]')[0]
-    console.log(todayString)
-    
+    return res;
+}
 
-
+let getLiveCount=function(data){
+    let root = HTMLParser.parse(data);
+    let res;
+    try {
+         res=root.querySelector('#rawCount').rawText;     
+    }
+    catch (e){
+        console.log(e);
+        return false;
+    }
     return res;
 }
 
 module.exports.getData=getData;
+module.exports.getCount=getLiveCount;
