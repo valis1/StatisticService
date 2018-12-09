@@ -10,7 +10,7 @@ let getData=function(data){
     try {
     res.viewsCount=$('#youtube-stats-header-views').html()
     res.subscribleRank=$('#afd-header-subscriber-rank').html()
-    res.videoViewRanc=$('#afd-header-videoview-rank').html()
+    res.videoViewRank=$('#afd-header-videoview-rank').html()
     res.views30Days=$('#afd-header-views-30d').html()
     res.subscribers30Days=$('#afd-header-subs-30d').html()
     res.todayVideoViews=$('div[style*="width: 860px; height: 32px;"]').last().find('span').last().html();

@@ -5,7 +5,7 @@ var userSchema=new mongoose.Schema(
         socialbladeID:{type:String,required:true},
         createdDate:{type:Date, default:Date.now},
         lastRequest:Date,
-        timezone:Number,
+        timezone:{type:String,default:'+2'},
         mignightSubscribers:{type:Number,default:-1},
         patreonLogin:{type:String,required:true},
         patreonRank:{type:Number,default:-1},

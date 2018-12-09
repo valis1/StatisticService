@@ -1,19 +1,23 @@
 var mongoose = require('mongoose');
 var sociabladeParser=require('../helpers/socialblade_parser');
+var resultAdaptor=require('../helpers/resultAdaptor');
 var request=require('request')
 var User = mongoose.model('users');
 
 
 //Отправка ответа в JSON
 var sendJSONresponse = function(res, status, content) {
+    let resContent=resultAdaptor.adaptJson(content);
     res.status(status);
-    res.json(content);
+    res.json(resContent);
   };
 
 //Отправка ответа в тексте
 var sendCsvResponse=function(res,status,content){
     console.log('stub');
 }
+
+
 
 var getData=function(req,res){
     let socialbladeID=req.query.socialblade;
@@ -74,6 +78,8 @@ var getData=function(req,res){
                                 if (lsTempResult){
                                     result.liveSubscribers=lsTempResult;
                                     result.todaySubscribers=lsTempResult-user.mignightSubscribers;
+                                    result.time=resultAdaptor.calcTime(user.timezone);
+                                    sendResponse(res,200,result);
                                 }
                                 else {
                                     sendResponse(res,501,{'error':'Sociable live page parse error'});
