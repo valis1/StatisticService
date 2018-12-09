@@ -71,25 +71,7 @@ var getData=function(req,res){
                                 let lsTempResult=sociabladeParser.getCount(body);
                                 if (lsTempResult){
                                     result.liveSubscribers=lsTempResult;
-
-                                    //Запрос Patreon
-                                    requestOptions.patreon='https://www.patreon.com/'+patreon;
-                                    request(requestOptions,function(error,response,body){
-                                        if (err){
-                                            sendResponse(res,534,{'error':'Patreon request error'});
-                                        }
-                                        else{
-                                            patResult=patreonParser.getData(body);
-                                            if (patResult){
-                                                sendResponse(res,200,result);
-                                                
-
-                                            }
-                                            else {
-                                                sendResponse(res,501,{'error':'Patreon live page parse error'});
-                                            }
-                                        }
-                                    });
+                                    
                                 }
                                 else {
                                     sendResponse(res,501,{'error':'Sociable live page parse error'});
