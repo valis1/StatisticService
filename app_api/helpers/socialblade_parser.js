@@ -3,7 +3,6 @@ var cheerio = require("cheerio");
 
 
 let getData=function(data){
-    let root = HTMLParser.parse(data);
     let $ = cheerio.load(data);
     let res={};
 

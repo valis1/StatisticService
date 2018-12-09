@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var sociabladeParser=require('../helpers/socialblade_parser');
+var patreonParser=require('../helpers/patreon_parser');
 var request=require('request')
 var User = mongoose.model('users');
 
@@ -20,7 +21,7 @@ var getData=function(req,res){
     let patreon=req.query.patreon;
     let userTime=req.query.gmt ? req.query.gmt:0;
     let sendResponse=sendJSONresponse;
-    let sociableData
+    let sociableData;
 
     if (!socialbladeID){
         sendResponse(res,400,{'error':'socialbladeID ID is not passed'});
@@ -70,7 +71,25 @@ var getData=function(req,res){
                                 let lsTempResult=sociabladeParser.getCount(body);
                                 if (lsTempResult){
                                     result.liveSubscribers=lsTempResult;
-                                    sendResponse(res,200,result);
+
+                                    //Запрос Patreon
+                                    requestOptions.patreon='https://www.patreon.com/'+patreon;
+                                    request(requestOptions,function(error,response,body){
+                                        if (err){
+                                            sendResponse(res,534,{'error':'Patreon request error'});
+                                        }
+                                        else{
+                                            patResult=patreonParser.getData(body);
+                                            if (patResult){
+                                                sendResponse(res,200,result);
+                                                
+
+                                            }
+                                            else {
+                                                sendResponse(res,501,{'error':'Patreon live page parse error'});
+                                            }
+                                        }
+                                    });
                                 }
                                 else {
                                     sendResponse(res,501,{'error':'Sociable live page parse error'});
