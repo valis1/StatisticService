@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
 var sociabladeParser=require('../helpers/socialblade_parser');
-var patreonParser=require('../helpers/patreon_parser');
 var request=require('request')
 var User = mongoose.model('users');
 
@@ -34,14 +33,14 @@ var getData=function(req,res){
 
     User.findOneOrCreate({
         'socialbladeID':socialbladeID,
-        'timezone':userTime},
+        'timezone':userTime,
+        'patreonLogin':patreon},
         function (err,user){
             if (err){
                 sendResponse(res,523,{'error':'db request error'});
             }
             else {
-                let todaySubscribers= user.todaySubscribers
-
+                
                 //Пообновляем данные по юзеру
                 user.timezone=userTime;
                 user.lastRequest=Date.now();
@@ -61,6 +60,9 @@ var getData=function(req,res){
                     else {
                         let result=sociabladeParser.getData(body);
                         if (result){
+                        //Дополняем Result
+                        result.patreonRank=user.patreonRank;
+                        result.patreonCost=user.patreonCost;
                         //Запрос Live статистики по подписчикам
                         requestOptions.url=requestOptions.url+'/realtime';
                         request(requestOptions,function(error,response,body){
@@ -71,7 +73,7 @@ var getData=function(req,res){
                                 let lsTempResult=sociabladeParser.getCount(body);
                                 if (lsTempResult){
                                     result.liveSubscribers=lsTempResult;
-                                    
+                                    result.todaySubscribers=lsTempResult-user.mignightSubscribers;
                                 }
                                 else {
                                     sendResponse(res,501,{'error':'Sociable live page parse error'});

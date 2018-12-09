@@ -6,14 +6,17 @@ var userSchema=new mongoose.Schema(
         createdDate:{type:Date, default:Date.now},
         lastRequest:Date,
         timezone:Number,
-        todaySubscribers:Number,
+        mignightSubscribers:{type:Number,default:-1},
+        patreonLogin:{type:String,required:true},
+        patreonRank:{type:Number,default:-1},
+        patreonCost:{type:Number,default:-1},
         lastUpdate:Date
     }
 );
 
 userSchema.statics.findOneOrCreate = function findOneOrCreate(condition, callback) {
     const self = this
-    self.findOne({'socialbladeID':condition.socialbladeID}, (err, result) => {
+    self.findOne({'socialbladeID':condition.socialbladeID,'patreonLogin':condition.patreonLogin}, (err, result) => {
         return result ? callback(err, result) : self.create(condition, (err, result) => { return callback(err, result) })
     })
 }
