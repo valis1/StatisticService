@@ -14,7 +14,7 @@ var sendJSONresponse = function(res, status, content) {
 
 //Отправка ответа в тексте
 var sendCsvResponse=function(res,status,content){
-    let resContent=content
+    let resContent=resultAdaptor.adaptJson(content);
     if (status==200){
     resString=resContent.liveSubscribers+';'
               +resContent.todaySubscribers+';'
@@ -30,7 +30,8 @@ var sendCsvResponse=function(res,status,content){
               +resContent.time
 
     res.status(status);
-    res.string(resString);
+
+    res.send(resString);
     }
     else {
         res.status(status);
@@ -44,7 +45,7 @@ var getData=function(req,res){
     let socialbladeID=req.query.socialblade;
     let patreon=req.query.patreon;
     let userTime=req.query.gmt ? req.query.gmt:0;
-    let format=req.query.format ? req.query.format:'text'
+    let format=req.query.format ? req.query.format:'text';
     let sendResponse=format=='text' ? sendCsvResponse : sendJSONresponse;
     let sociableData;
 
