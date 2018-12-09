@@ -14,7 +14,28 @@ var sendJSONresponse = function(res, status, content) {
 
 //Отправка ответа в тексте
 var sendCsvResponse=function(res,status,content){
-    console.log('stub');
+    let resContent=content
+    if (status==200){
+    resString=resContent.liveSubscribers+';'
+              +resContent.todaySubscribers+';'
+              +resContent.subscribers30Days+';'
+              +resContent.viewsCount+';'
+              +resContent.todayVideoViews+';'
+              +resContent.views30Days+';'
+              +resContent.subscribleRank+';'
+              +resContent.videoViewRank+';'
+              +resContent.patreonRank+';'
+              +resContent.patreonCost+';'
+              +resContent.userCreatedDate+';'
+              +resContent.time
+
+    res.status(status);
+    res.string(resString);
+    }
+    else {
+        res.status(status);
+        res.json(content);
+    }
 }
 
 
@@ -23,8 +44,10 @@ var getData=function(req,res){
     let socialbladeID=req.query.socialblade;
     let patreon=req.query.patreon;
     let userTime=req.query.gmt ? req.query.gmt:0;
-    let sendResponse=sendJSONresponse;
+    let format=req.query.format ? req.query.format:'text'
+    let sendResponse=format=='text' ? sendCsvResponse : sendJSONresponse;
     let sociableData;
+
 
     if (!socialbladeID){
         sendResponse(res,400,{'error':'socialbladeID ID is not passed'});
