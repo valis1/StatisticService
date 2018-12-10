@@ -4,7 +4,9 @@ let adaptJson=function(data){
     let month_names_short=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     try{
     data.subscribleRank=data.subscribleRank.substring(0,data.subscribleRank.length -2);
+	data.subscribleRank=data.subscribleRank.replace(/,/g,'');
     data.videoViewRank=data.videoViewRank.substring(0,data.videoViewRank.length -2);
+	data.videoViewRank=data.videoViewRank.replace(/,/g,'');
     data.views30Days=data.views30Days.replace(/\n/g,'');
     data.views30Days=data.views30Days.replace(/,/g,'');
     data.subscribers30Days=data.subscribers30Days.replace(/\n/g,'');
