@@ -31,7 +31,6 @@ let getLiveCount=function(data){
          res=root.querySelector('#rawCount').rawText;     
     }
     catch (e){
-        console.log(e);
         return false;
     }
     return res;

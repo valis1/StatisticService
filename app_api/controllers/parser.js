@@ -8,15 +8,22 @@ var User = mongoose.model('users');
 //Отправка ответа в JSON
 var sendJSONresponse = function(res, status, content) {
     let resContent=resultAdaptor.adaptJson(content);
-    res.status(status);
-    res.json(resContent);
+    if (resContent){
+        res.status(status);
+        res.json(resContent);
+    }
+    else {
+      res.status(501);
+      res.json({'error':'An Error occured in Result parsing stage'});
+    }
   };
 
 //Отправка ответа в тексте
 var sendCsvResponse=function(res,status,content){
     let resContent=resultAdaptor.adaptJson(content);
-    if (status==200){
-    resString=resContent.liveSubscribers+';'
+    if (resContent){
+      if (status==200){
+      resString=resContent.liveSubscribers+';'
               +resContent.todaySubscribers+';'
               +resContent.subscribers30Days+';'
               +resContent.viewsCount+';'
@@ -29,14 +36,20 @@ var sendCsvResponse=function(res,status,content){
               +resContent.userCreatedDate+';'
               +resContent.time
 
-    res.status(status);
-
-    res.send(resString);
-    }
-    else {
+      res.status(status);
+      res.send(resString);
+      }
+      else {
         res.status(status);
         res.json(content);
+      }
     }
+   else {
+     res.status(501)
+     res.json({'error':'An Error occured in Result parsing stage'});
+   }
+    
+    
 }
 
 
