@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var sociabladeParser=require('../helpers/socialblade_parser');
 var resultAdaptor=require('../helpers/resultAdaptor');
-var request=require('request')
+var request=require('request');
 var User = mongoose.model('users');
 
 
@@ -23,18 +23,18 @@ var sendCsvResponse=function(res,status,content){
     let resContent=resultAdaptor.adaptJson(content);
     if (resContent){
       if (status==200){
-      resString=resContent.liveSubscribers+';'
-              +resContent.todaySubscribers+';'
-              +resContent.subscribers30Days+';'
-              +resContent.viewsCount+';'
-              +resContent.todayVideoViews+';'
-              +resContent.views30Days+';'
-              +resContent.subscribleRank+';'
-              +resContent.videoViewRank+';'
-              +resContent.patreonRank+';'
-              +resContent.patreonCost+';'
-              +resContent.userCreatedDate+';'
-              +resContent.time
+      resString=resContent.liveSubscribers+';'+
+              resContent.todaySubscribers+';'+
+              resContent.subscribers30Days+';'+
+              resContent.viewsCount+';'+
+              resContent.todayVideoViews+';'+
+              resContent.views30Days+';'+
+              resContent.subscribleRank+';'+
+              resContent.videoViewRank+';'+
+              resContent.patreonRank+';'+
+              resContent.patreonCost+';'+
+              resContent.userCreatedDate+';'+
+              resContent.time;
 
       res.status(status);
       res.send(resString);
@@ -45,12 +45,12 @@ var sendCsvResponse=function(res,status,content){
       }
     }
    else {
-     res.status(501)
+     res.status(501);
      res.json({'error':'An Error occured in Result parsing stage'});
    }
     
     
-}
+};
 
 
 
@@ -93,7 +93,7 @@ var getData=function(req,res){
                     headers:{
                         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
                     }
-                }
+                };
                 request(requestOptions, function (error, response, body) {
                     if (err){
                         sendResponse(res,534,{'error':'Sociable request error'});
@@ -114,8 +114,18 @@ var getData=function(req,res){
                                 let lsTempResult=sociabladeParser.getCount(body);
                                 if (lsTempResult){
                                     result.liveSubscribers=lsTempResult;
-                                    result.todaySubscribers=lsTempResult-user.mignightSubscribers;
                                     result.time=resultAdaptor.calcTime(user.timezone);
+                                
+                                    //Пообновляем данные по юзеру
+                                    user.timezone=userTime;
+                                    user.lastRequest=Date.now();
+                                    //Для новых пользователей в качестве полуночных данных по подписчикам выставляем текущие данные
+                                    if (user.created){
+                                        user.mignightSubscribers=lsTempResult;
+                                	}
+                                    
+                                    result.todaySubscribers=lsTempResult-user.mignightSubscribers;//Расчет подписчиков в текущие сутки. Для новых пользователей будет 0
+                                    user.save((err)=>console.log(err));
                                     sendResponse(res,200,result);
                                 }
                                 else {
@@ -138,6 +148,6 @@ var getData=function(req,res){
             }
         }
         );
-}
+};
 
 module.exports.getData=getData;
