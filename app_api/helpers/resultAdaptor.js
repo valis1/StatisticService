@@ -37,7 +37,10 @@ let calcTime=function(offset) {
     
     var now = DateTime.utc();
     res=now.plus({hours:parseInt(offset)});
-    return String(res.hour)+':'+String(res.minute);
+    let stringHour=(String(res.hour).length==1) ? '0'+String(res.hour) : String(res.hour);
+    let stringMinute=(String(res.minute).length==1) ? '0'+String(res.minute) : String(res.minute);
+    
+    return stringHour+':'+stringMinute;
 
 }
 
