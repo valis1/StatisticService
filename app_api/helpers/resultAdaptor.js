@@ -14,11 +14,7 @@ let adaptJson=function(data){
     let day=data.userCreatedDate.match(/\d{1,2}\D/)[0];
     day=day.substring(0,day.length-1);
     let year=data.userCreatedDate.match(/\d{4}/)[0];
-    }
-    catch (e){
-      console.log(e)
-    }
-
+    
     if (mounth<10){
         mounth='0'+mounth;
     }
@@ -29,6 +25,10 @@ let adaptJson=function(data){
     }
     
     data.userCreatedDate=day+'.'+mounth+'.'+year;
+    }
+    catch (e){
+      console.log(e)
+    }
     
     return data;
 }
