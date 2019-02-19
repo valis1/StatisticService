@@ -4,6 +4,19 @@ var resultAdaptor=require('../helpers/resultAdaptor');
 var request=require('request');
 var User = mongoose.model('users');
 
+//  Ограничения длины, минимума и максимума для целочисленных значений CSV
+const csvLen = 8;
+const csvMin = -99999999;
+const csvMax = +99999999;
+
+//  Расширение прототипа для форматирования полей CSV
+Number.prototype.pad = function( len, min, max ) {
+    var sign = this > 0 ? '+' : '-';
+    var string = String( Math.abs( Math.max( Math.min( this, max ), min ) ) );
+    while( string.length < ( len || 2 ) )
+        string = '0' + string;
+    return sign + string;
+}
 
 //Отправка ответа в JSON
 var sendJSONresponse = function(res, status, content) {
@@ -23,18 +36,19 @@ var sendCsvResponse=function(res,status,content){
     let resContent=resultAdaptor.adaptJson(content);
     if (resContent){
       if (status==200){
-      resString=resContent.liveSubscribers+';'+
-              resContent.todaySubscribers+';'+
-              resContent.subscribers30Days+';'+
-              resContent.viewsCount+';'+
-              resContent.todayVideoViews+';'+
-              resContent.views30Days+';'+
-              resContent.subscribleRank+';'+
-              resContent.videoViewRank+';'+
-              resContent.patreonRank+';'+
-              resContent.patreonCost+';'+
-              resContent.userCreatedDate+';'+
-              resContent.time;
+      resString =
+                Number( resContent.liveSubscribers ).pad( csvLen, csvMin, csvMax ) + ';' +
+                Number( resContent.todaySubscribers ).pad( csvLen, csvMin, csvMax ) + ';' +
+                Number( resContent.subscribers30Days ).pad( csvLen, csvMin, csvMax ) + ';' +
+                Number( resContent.viewsCount ).pad( csvLen, csvMin, csvMax ) + ';' +
+                Number( resContent.todayVideoViews ).pad( csvLen, csvMin, csvMax ) + ';' +
+                Number( resContent.views30Days ).pad( csvLen, csvMin, csvMax ) + ';' +
+                Number( resContent.subscribleRank ).pad( csvLen, csvMin, csvMax ) + ';' +
+                Number( resContent.videoViewRank ).pad( csvLen, csvMin, csvMax ) + ';' +
+                Number( resContent.patreonRank ).pad( csvLen, csvMin, csvMax ) + ';' +
+                Number( resContent.patreonCost ).pad( csvLen, csvMin, csvMax ) + ';' +
+                resContent.userCreatedDate + ';' +
+                resContent.time;
 
       res.status(status);
       res.send(resString);
